@@ -49,13 +49,20 @@ class EnergycostSerializer(serializers.ModelSerializer):
 class SuperUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'is_superuser']
+        fields = ['username', 'password', 'email']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = User.objects.create_superuser(
+        if User.objects.count() >= 10:
+            raise serializers.ValidationError('User Creation Limit Reached')
+
+        user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
             email=validated_data['email'],
         )
         return user
+
+class LoginViewSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length = 500)
+    password = serializers.CharField(write_only = True)

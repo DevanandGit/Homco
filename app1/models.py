@@ -79,7 +79,7 @@ def create_or_update_rawmaterial_firestore_document(sender, instance, created, *
     doc_ref = db.collection('raw_materials').document(str(instance.id))
     doc_ref.set({
         'material_name': instance.material_name,
-        'price': instance.price,
+        'price': float(instance.price),
         'unit': instance.unit,
     })
 
@@ -106,7 +106,7 @@ def create_or_update_packingmaterial_firestore_document(sender, instance, create
         'pack_name': instance.pack_name,
         'quantity': instance.quantity,
         'unit': instance.unit,
-        'price': instance.price,
+        'price': float(instance.price),
     })
 
 @receiver(pre_delete, sender=PackingMaterial)
@@ -125,7 +125,7 @@ def create_or_update_energycost_firestore_document(sender, instance, created, **
     doc_ref = db.collection('energy_costs').document(str(instance.id))
     doc_ref.set({
         'category_name': instance.category_name,
-        'cost': instance.cost,
+        'cost': float(instance.cost),
     })
 
 @receiver(pre_delete, sender=Energycost)

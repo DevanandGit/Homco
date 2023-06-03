@@ -1,6 +1,7 @@
 from .serializer import (RawMaterialSerializer, PackingMaterialSerializer,
                         ManPowerSerializer, ProductSerializer,
-                        EnergycostSerializer, SuperUserSerializer)
+                        EnergycostSerializer, SuperUserSerializer,
+                        LoginViewSerializer)
 from rest_framework import generics
 from .models import (Product, RawMaterial,
                     ManPower, PackingMaterial, 
@@ -9,7 +10,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.permissions import IsAuthenticated
 
 #Classes for Adding data to database
 @method_decorator(login_required, name='dispatch')
@@ -159,3 +161,29 @@ class EnergycostDetailView(generics.RetrieveAPIView):
 class SuperUserCreateView(generics.CreateAPIView):
     serializer_class = SuperUserSerializer
 
+class LoginView(APIView):
+    serializer_class = LoginViewSerializer
+
+    def get_serializer(self,*args, **kwargs):
+        return LoginViewSerializer(*args, **kwargs)
+    
+    def post(self, request):
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception = True)
+
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+
+        user = authenticate(request, username = username, password = password)
+        if user is not None:
+            login(request, user)
+            return Response({'message':'Login successfull'})
+        else:
+            return Response({'message':'Login Unsuccesfull'})
+
+class LogoutView(APIView):
+    permission_class = [IsAuthenticated]
+
+    def post(self, request):
+        logout(request)
+        return Response({'message':'Logout successful'})

@@ -9,7 +9,8 @@ from .views import (ProductAddView, RawMaterialAddView,
                     PackingMaterialDeleteView,ManPowerDeleteView, EnergycostDeleteView,
                     ProductDetailView,RawMaterialDetailView,
                     PackingMaterialDetailView,ManPowerDetailView, EnergycostDetailView,
-                    SuperUserCreateView)
+                    SuperUserCreateView, LoginView, LogoutView)
+                    
 urlpatterns = [
     #Addview
     path('productadd/', ProductAddView.as_view(), name='product'),
@@ -48,4 +49,6 @@ urlpatterns = [
     path('energycostdetail/<str:category_name>/', EnergycostDetailView.as_view(), name='energycostdetail'),
 
     path('create/', SuperUserCreateView.as_view(), name='superuser-create'),
+    path('login/', LoginView.as_view(), name = 'login'),
+    path('logout/', LogoutView.as_view(), name='logout')
 ]
